@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flight Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Flight Details</h1>
+
+      <section class="card">
+        <p><strong>Flight Number:</strong> {{ details["flight_number"] }}</p>
+        <p><strong>Departure Date:</strong> {{ details["departure_date"] }}</p>
+        <p><strong>Origin:</strong> {{ details["origin_code"] }}</p>
+        <p><strong>Destination:</strong> {{ details["dest_code"] }}</p>
+        <p><strong>Departure Time (GMT):</strong> {{ details["departure_time"] }}</p>
+        <p><strong>Plane Type:</strong> {{ details["plane_type"] }}</p>
+      </section>
+
+      <section class="card">
+        <h2>Seat Summary</h2>
+        <p><strong>Capacity:</strong> {{ capacity }}</p>
+        <p><strong>Booked Seats:</strong> {{ booked }}</p>
+        <p><strong>Available Seats:</strong> {{ available }}</p>
+      </section>
+
+      <div class="actions">
+        <a href="{{ url_for('index') }}">Back to Search</a>
+      </div>
+    </main>
+  </body>
+</html>
+

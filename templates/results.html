@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Available Flights</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Flights</h1>
+      <p>
+        Route:
+        <strong>{{ filters.origin_code }}</strong>
+        →
+        <strong>{{ filters.dest_code }}</strong>
+      </p>
+      <p>
+        Date range:
+        <strong>{{ filters.start_date }}</strong>
+        to
+        <strong>{{ filters.end_date }}</strong>
+      </p>
+
+      <div class="actions">
+        <a href="{{ url_for('index') }}">New Search</a>
+      </div>
+
+      {% if flights %}
+        <table class="card">
+          <thead>
+            <tr>
+              <th>Flight Number</th>
+              <th>Departure Date</th>
+              <th>Origin</th>
+              <th>Destination</th>
+              <th>Departure Time (GMT)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in flights %}
+              <tr>
+                <td>
+                  <a
+                    href="{{ url_for('flight_detail', flight_number=row['flight_number'], departure_date=row['departure_date']) }}"
+                  >
+                    {{ row["flight_number"] }}
+                  </a>
+                </td>
+                <td>{{ row["departure_date"] }}</td>
+                <td>{{ row["origin_code"] }}</td>
+                <td>{{ row["dest_code"] }}</td>
+                <td>{{ row["departure_time"] }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="card">No flights match this search.</p>
+      {% endif %}
+    </main>
+  </body>
+</html>
+

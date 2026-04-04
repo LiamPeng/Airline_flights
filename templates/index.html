@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Airline Flights Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Airline Flights Search</h1>
+      <p class="muted">All departure times are interpreted as GMT.</p>
+
+      <form method="post" action="{{ url_for('search') }}" class="card form-grid">
+        <label>
+          Origin Airport Code
+          <input
+            name="origin_code"
+            maxlength="3"
+            value="{{ values.get('origin_code', '') }}"
+            placeholder="e.g. JFK"
+            required
+          />
+          {% if errors.get('origin_code') %}
+            <span class="error">{{ errors['origin_code'] }}</span>
+          {% endif %}
+        </label>
+
+        <label>
+          Destination Airport Code
+          <input
+            name="dest_code"
+            maxlength="3"
+            value="{{ values.get('dest_code', '') }}"
+            placeholder="e.g. LAX"
+            required
+          />
+          {% if errors.get('dest_code') %}
+            <span class="error">{{ errors['dest_code'] }}</span>
+          {% endif %}
+        </label>
+
+        <label>
+          Start Date
+          <input
+            type="date"
+            name="start_date"
+            value="{{ values.get('start_date', '') }}"
+            required
+          />
+          {% if errors.get('start_date') %}
+            <span class="error">{{ errors['start_date'] }}</span>
+          {% endif %}
+        </label>
+
+        <label>
+          End Date
+          <input
+            type="date"
+            name="end_date"
+            value="{{ values.get('end_date', '') }}"
+            required
+          />
+          {% if errors.get('end_date') %}
+            <span class="error">{{ errors['end_date'] }}</span>
+          {% endif %}
+        </label>
+
+        {% if errors.get('date_range') %}
+          <p class="error full-width">{{ errors['date_range'] }}</p>
+        {% endif %}
+
+        <button type="submit">Search Flights</button>
+      </form>
+    </main>
+  </body>
+</html>
+
