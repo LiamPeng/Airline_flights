@@ -8,57 +8,105 @@
   </head>
   <body>
     <main class="container">
-      <h1>Flights</h1>
-      <p>
-        Route:
-        <strong>{{ filters.origin_code }}</strong>
-        →
-        <strong>{{ filters.dest_code }}</strong>
-      </p>
-      <p>
-        Date range:
-        <strong>{{ filters.start_date }}</strong>
-        to
-        <strong>{{ filters.end_date }}</strong>
-      </p>
-
-      <div class="actions">
-        <a href="{{ url_for('index') }}">New Search</a>
+      <div class="page-header">
+        <div class="header-content">
+          <h1>Available Flights</h1>
+          <div class="route-info">
+            <div class="route-badge">
+              <span class="airport-code">{{ filters.origin_code }}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              <span class="airport-code">{{ filters.dest_code }}</span>
+            </div>
+            <div class="date-range">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span>{{ filters.start_date }} — {{ filters.end_date }}</span>
+            </div>
+          </div>
+        </div>
+        <a href="{{ url_for('index') }}" class="back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          New Search
+        </a>
       </div>
 
       {% if flights %}
-        <table class="card">
-          <thead>
-            <tr>
-              <th>Flight Number</th>
-              <th>Departure Date</th>
-              <th>Origin</th>
-              <th>Destination</th>
-              <th>Departure Time (GMT)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in flights %}
-              <tr>
-                <td>
-                  <a
-                    href="{{ url_for('flight_detail', flight_number=row['flight_number'], departure_date=row['departure_date']) }}"
-                  >
-                    {{ row["flight_number"] }}
-                  </a>
-                </td>
-                <td>{{ row["departure_date"] }}</td>
-                <td>{{ row["origin_code"] }}</td>
-                <td>{{ row["dest_code"] }}</td>
-                <td>{{ row["departure_time"] }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="results-count">
+          <span class="count-number">{{ flights|length }}</span> flight{% if flights|length != 1 %}s{% endif %} found
+        </div>
+
+        <div class="flights-list">
+          {% for row in flights %}
+            <a 
+              href="{{ url_for('flight_detail', flight_number=row['flight_number'], departure_date=row['departure_date']) }}"
+              class="flight-card"
+            >
+              <div class="flight-main">
+                <div class="flight-number-section">
+                  <span class="flight-label">Flight</span>
+                  <span class="flight-number">{{ row["flight_number"] }}</span>
+                </div>
+                
+                <div class="flight-route">
+                  <div class="airport-info">
+                    <span class="airport-code-large">{{ row["origin_code"] }}</span>
+                    <span class="time-info">{{ row["departure_time"] }}</span>
+                  </div>
+                  
+                  <div class="flight-path">
+                    <div class="path-line"></div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="plane-icon">
+                      <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                    </svg>
+                    <div class="path-line"></div>
+                  </div>
+                  
+                  <div class="airport-info destination">
+                    <span class="airport-code-large">{{ row["dest_code"] }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flight-meta">
+                <div class="meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  {{ row["departure_date"] }}
+                </div>
+                <div class="view-details">
+                  View details
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
       {% else %}
-        <p class="card">No flights match this search.</p>
+        <div class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <h3>No flights found</h3>
+          <p>Try adjusting your search criteria</p>
+          <a href="{{ url_for('index') }}" class="primary-btn">New Search</a>
+        </div>
       {% endif %}
     </main>
   </body>
 </html>
-

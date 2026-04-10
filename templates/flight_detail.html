@@ -3,33 +3,159 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Flight Details</title>
+    <title>Flight {{ details["flight_number"] }} Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   </head>
   <body>
     <main class="container">
-      <h1>Flight Details</h1>
+      <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">Search</a>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+        <span>Flight {{ details["flight_number"] }}</span>
+      </div>
 
-      <section class="card">
-        <p><strong>Flight Number:</strong> {{ details["flight_number"] }}</p>
-        <p><strong>Departure Date:</strong> {{ details["departure_date"] }}</p>
-        <p><strong>Origin:</strong> {{ details["origin_code"] }}</p>
-        <p><strong>Destination:</strong> {{ details["dest_code"] }}</p>
-        <p><strong>Departure Time (GMT):</strong> {{ details["departure_time"] }}</p>
-        <p><strong>Plane Type:</strong> {{ details["plane_type"] }}</p>
-      </section>
+      <div class="detail-header">
+        <div class="flight-title">
+          <h1>Flight {{ details["flight_number"] }}</h1>
+          <span class="status-badge">Scheduled</span>
+        </div>
+      </div>
 
-      <section class="card">
-        <h2>Seat Summary</h2>
-        <p><strong>Capacity:</strong> {{ capacity }}</p>
-        <p><strong>Booked Seats:</strong> {{ booked }}</p>
-        <p><strong>Available Seats:</strong> {{ available }}</p>
-      </section>
+      <div class="detail-grid">
+        <section class="detail-card route-card">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Route Information
+          </h2>
+          <div class="route-visual">
+            <div class="route-point">
+              <div class="point-dot origin"></div>
+              <div class="point-info">
+                <span class="point-label">Origin</span>
+                <span class="point-code">{{ details["origin_code"] }}</span>
+              </div>
+            </div>
+            
+            <div class="route-connector">
+              <div class="connector-line"></div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="connector-plane">
+                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+              </svg>
+            </div>
+            
+            <div class="route-point">
+              <div class="point-dot destination"></div>
+              <div class="point-info">
+                <span class="point-label">Destination</span>
+                <span class="point-code">{{ details["dest_code"] }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <div class="actions">
-        <a href="{{ url_for('index') }}">Back to Search</a>
+        <section class="detail-card">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Flight Details
+          </h2>
+          <div class="info-list">
+            <div class="info-row">
+              <span class="info-label">Departure Date</span>
+              <span class="info-value">{{ details["departure_date"] }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Departure Time</span>
+              <span class="info-value">{{ details["departure_time"] }} <span class="timezone">GMT</span></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Aircraft Type</span>
+              <span class="info-value aircraft">{{ details["plane_type"] }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-card seats-card">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/>
+              <path d="M9 22V12h6v10M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Seat Availability
+          </h2>
+          
+          <div class="seats-summary">
+            <div class="seat-stat primary">
+              <div class="stat-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/>
+                  <path d="M9 22V12h6v10M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ capacity }}</span>
+                <span class="stat-label">Total Capacity</span>
+              </div>
+            </div>
+
+            <div class="seats-breakdown">
+              <div class="seat-stat-item">
+                <div class="stat-bar">
+                  <div class="stat-bar-fill booked" style="width: {{ (booked / capacity * 100)|round }}%"></div>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ booked }}</span>
+                  <span class="stat-text">Booked</span>
+                </div>
+              </div>
+
+              <div class="seat-stat-item">
+                <div class="stat-bar">
+                  <div class="stat-bar-fill available" style="width: {{ (available / capacity * 100)|round }}%"></div>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ available }}</span>
+                  <span class="stat-text">Available</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% if available > 0 %}
+            <div class="availability-status available">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Seats available
+            </div>
+          {% else %}
+            <div class="availability-status full">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Flight is full
+            </div>
+          {% endif %}
+        </section>
+      </div>
+
+      <div class="actions-bar">
+        <a href="{{ url_for('index') }}" class="secondary-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back to Search
+        </a>
       </div>
     </main>
   </body>
 </html>
-

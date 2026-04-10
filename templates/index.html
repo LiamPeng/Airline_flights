@@ -3,76 +3,137 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Airline Flights Search</title>
+    <title>Flight Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   </head>
   <body>
     <main class="container">
-      <h1>Airline Flights Search</h1>
-      <p class="muted">All departure times are interpreted as GMT.</p>
+      <div class="header-section">
+        <div class="icon-wrapper">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+          </svg>
+        </div>
+        <h1>Search Flights</h1>
+        <p class="subtitle">Find your next journey</p>
+      </div>
 
-      <form method="post" action="{{ url_for('search') }}" class="card form-grid">
-        <label>
-          Origin Airport Code
-          <input
-            name="origin_code"
-            maxlength="3"
-            value="{{ values.get('origin_code', '') }}"
-            placeholder="e.g. JFK"
-            required
-          />
-          {% if errors.get('origin_code') %}
-            <span class="error">{{ errors['origin_code'] }}</span>
-          {% endif %}
-        </label>
+      <form method="post" action="{{ url_for('search') }}" class="search-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="origin_code">
+              <span class="label-text">From</span>
+              <span class="label-hint">Airport code</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                id="origin_code"
+                name="origin_code"
+                maxlength="3"
+                value="{{ values.get('origin_code', '') }}"
+                placeholder="JFK"
+                class="airport-input"
+                required
+              />
+            </div>
+            {% if errors.get('origin_code') %}
+              <span class="error-msg">{{ errors['origin_code'] }}</span>
+            {% endif %}
+          </div>
 
-        <label>
-          Destination Airport Code
-          <input
-            name="dest_code"
-            maxlength="3"
-            value="{{ values.get('dest_code', '') }}"
-            placeholder="e.g. LAX"
-            required
-          />
-          {% if errors.get('dest_code') %}
-            <span class="error">{{ errors['dest_code'] }}</span>
-          {% endif %}
-        </label>
+          <div class="arrow-divider">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
 
-        <label>
-          Start Date
-          <input
-            type="date"
-            name="start_date"
-            value="{{ values.get('start_date', '') }}"
-            required
-          />
-          {% if errors.get('start_date') %}
-            <span class="error">{{ errors['start_date'] }}</span>
-          {% endif %}
-        </label>
+          <div class="form-group">
+            <label for="dest_code">
+              <span class="label-text">To</span>
+              <span class="label-hint">Airport code</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                id="dest_code"
+                name="dest_code"
+                maxlength="3"
+                value="{{ values.get('dest_code', '') }}"
+                placeholder="LAX"
+                class="airport-input"
+                required
+              />
+            </div>
+            {% if errors.get('dest_code') %}
+              <span class="error-msg">{{ errors['dest_code'] }}</span>
+            {% endif %}
+          </div>
+        </div>
 
-        <label>
-          End Date
-          <input
-            type="date"
-            name="end_date"
-            value="{{ values.get('end_date', '') }}"
-            required
-          />
-          {% if errors.get('end_date') %}
-            <span class="error">{{ errors['end_date'] }}</span>
-          {% endif %}
-        </label>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="start_date">
+              <span class="label-text">Departure</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="date"
+                id="start_date"
+                name="start_date"
+                value="{{ values.get('start_date', '') }}"
+                required
+              />
+            </div>
+            {% if errors.get('start_date') %}
+              <span class="error-msg">{{ errors['start_date'] }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="end_date">
+              <span class="label-text">Return</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="date"
+                id="end_date"
+                name="end_date"
+                value="{{ values.get('end_date', '') }}"
+                required
+              />
+            </div>
+            {% if errors.get('end_date') %}
+              <span class="error-msg">{{ errors['end_date'] }}</span>
+            {% endif %}
+          </div>
+        </div>
 
         {% if errors.get('date_range') %}
-          <p class="error full-width">{{ errors['date_range'] }}</p>
+          <div class="error-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            {{ errors['date_range'] }}
+          </div>
         {% endif %}
 
-        <button type="submit">Search Flights</button>
+        <div class="note-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          All times are shown in GMT
+        </div>
+
+        <button type="submit" class="search-btn">
+          <span>Search Flights</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
       </form>
     </main>
   </body>
 </html>
-
