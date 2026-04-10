@@ -1,86 +1,64 @@
-# Airline Flights and Booking (Flask + PostgreSQL)
+# Airline flights (Flask + Postgres)
 
-Simple Flask web app for searching flights by route and date range, then viewing seat availability for a selected flight/date.
+Small web app for the airline DB assignment. Backend is Postgres with the course schema; front end is Flask and Jinja. You enter origin/destination airport codes and a date range, get a list of flights, then click one to see capacity, how many seats are booked, and how many are left.
 
-## Features
+## The two SQL files
 
-- Start page form for `origin_code`, `dest_code`, `start_date`, `end_date`.
-- Flight results page shows all matching flights (including fully booked flights).
-- Click a flight to view plane capacity, booked seats, and available seats.
+**`schema.sql`** — creates tables (with foreign keys). Run:
 
-## Database: which SQL file to use?
+`python app.py --init-db`
 
-| File | Role |
-|------|------|
-| **`schema.sql`** | **Table definitions** for PostgreSQL, including **foreign keys** matching the ER diagram. Use this with `python app.py --init-db`. |
-| **`flights.sql`** | **Sample INSERT data** (homework-style dataset). Load **after** the schema is created: `python app.py --load-sample-data` or `psql "$DATABASE_URL" -f flights.sql`. |
+**`flights.sql`** — sample data only (`INSERT`s). Run after init:
 
-The original single-file homework dump mixed CREATE + data **without** foreign keys. This project keeps **`schema.sql` as the single source of truth for structure** (with FKs) and **`flights.sql` for optional seed data** so you do not duplicate conflicting DDL.
+`python app.py --load-sample-data`
 
-## Configuration
+If `flights.sql` still contains `CREATE TABLE` from an old one-file homework dump, don’t run that after `--init-db` or you’ll hit “relation already exists”. I split schema and data so the structure matches the ER diagram with proper FKs.
 
-- Engine: **PostgreSQL**
-- Connection string (required). **Do not** use the literal text `...` from examples; put your real username, password, and database name.
+## Environment
+
+You need Postgres and a database (e.g. `createdb airline`). Then set:
 
 ```bash
-# Typical local Postgres (replace myuser / mypass with your roles)
-export DATABASE_URL="postgresql://myuser:mypass@localhost:5432/airline"
+export DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/airline"
 ```
 
-If your Mac user can connect without a password (peer/trust), you can use:
+Use your real username and password — don’t leave literal `...` in the URL or the client will fail in a confusing way. On a Mac with local trust/peer auth, this often works:
 
 ```bash
 export DATABASE_URL="postgresql:///airline"
 ```
 
-(`AIRLINE_DATABASE_URL` is accepted as an alias.)
+`AIRLINE_DATABASE_URL` works the same as `DATABASE_URL` if you prefer that name.
 
-## Setup
-
-1. Create a database (e.g. `createdb airline` or via your host’s UI).
-2. Virtual environment (optional):
-
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-3. Install dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Create tables:
-
-   ```bash
-   export DATABASE_URL="postgresql://pengminyi@localhost:5432/airline"
-   python app.py --init-db
-   ```
-
-5. (Optional) Load sample data from `flights.sql`:
-
-   ```bash
-   python app.py --load-sample-data
-   ```
-
-## Run
+## First-time setup
 
 ```bash
-export DATABASE_URL="postgresql://pengminyi@localhost:5432/airline"
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+export DATABASE_URL="postgresql://..."   # your connection string
+python app.py --init-db
+python app.py --load-sample-data
+```
+
+If the DB is a mess, `dropdb` / `createdb` and run the last two lines again.
+
+## Demo day
+
+```bash
+export DATABASE_URL="postgresql://..."
 python app.py
 ```
 
-Open `http://127.0.0.1:5000`.
+Open http://127.0.0.1:5000 . If you loaded this repo’s `flights.sql`, try JFK → LAX with a range that includes 2026 (the seed has flights in 2025 and 2026).
 
-## Routes
+## Routes (for the write-up)
 
-- `GET /` — search form
-- `POST /search` — validates and redirects to results
-- `GET /flights` — matching flights
-- `GET /flights/<flight_number>/<departure_date>` — capacity and available seats
+| Path | What it does |
+|------|----------------|
+| `GET /` | Search form |
+| `POST /search` | Validates input, redirects to results |
+| `GET /flights?...` | Flight list |
+| `GET /flights/<flight_number>/<date>` | Seat summary for that flight/date |
 
-## Notes
-
-- Date format: `YYYY-MM-DD`; range is **inclusive**.
-- Departure times are shown as stored (assumed GMT).
+Dates are `YYYY-MM-DD`; the range is inclusive. Departure times are shown as stored in the DB (treated as GMT).
